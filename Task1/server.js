@@ -3,11 +3,11 @@ const app = express();
 const PORT = 3000;
 const URL = "/api/greetings";
 
-//http://localhost:3000/api/greetings?Name=Egor
+//http://localhost:3000/api/greetings?name=Egor
 
 app.get(URL, function (req, res) {
   try {
-    const name = req.query.Name;
+    const name = req.query.name;
 
     if (name) {
       res.send(`hello ${name}`);
