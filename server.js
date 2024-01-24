@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import mongodb from "mongodb";
 const app = express();
 const PORT = 3001;
-const dirname = "D:/-git-repositories/NodeJs/";
+const dirname = "C:/Users/egorp/git-repositories/NodeJs/";
 const connectionString =
   "mongodb+srv://Prohar:PEA16april2005@cluster0.bosgtkc.mongodb.net/?retryWrites=true&w=majority";
 
@@ -19,10 +19,12 @@ mongodb.MongoClient.connect(connectionString, { useUnifiedTopology: true })
     const db = client.db("NodeJs-Task");
     const quotesCollection = db.collection("quotes");
 
-    app.set('view engine', 'ejs');
+    app.set("view engine", "ejs");
 
+    app.use(express.static('public'));
     app.use(bodyParser.urlencoded({ extended: true }));
-    
+    app.use(bodyParser.json());
+
     app.get(URL.GREETINGS, function (req, res) {
       try {
         const name = req.query.name;
@@ -38,32 +40,34 @@ mongodb.MongoClient.connect(connectionString, { useUnifiedTopology: true })
     });
 
     app.get("/", (req, res) => {
-      res.sendFile(dirname + "/index.html");
-    });
-
-    app.get(URL.NOTES, (req, res) => {
-      res.sendFile(dirname + "/index.html");
+      
     });
 
     app.get(URL.NOTES, (req, res) => {
       quotesCollection
-        .find()
-        .toArray()
-        .then(results => {
-          res.render('index.ejs', { quotes: results })
-        })
-        .catch(/* ... */);
+      .find()
+      .toArray()
+      .then(results => {
+        res.render('index.ejs', { quotes: results });
+      })
+      .catch(/* ... */);
+
     });
 
     app.post(URL.NOTES, (req, res) => {
-      res.sendFile(dirname + "/index.html");
       quotesCollection
         .insertOne(req.body)
         .then((result) => {
+          res.redirect('/api/notes');
           console.log(result);
         })
         .catch((error) => console.error(error));
     });
+
+    app.put(URL.NOTES, (req, res) => {
+      console.log(res.body);
+    });
+
   })
   .catch((error) => console.error(error));
 
