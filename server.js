@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import mongodb from "mongodb";
+import mongodb, { ObjectId } from "mongodb";
 const app = express();
 const PORT = 3001;
 const dirname = "C:/Users/egorp/git-repositories/NodeJs/";
@@ -21,7 +21,7 @@ mongodb.MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     app.set("view engine", "ejs");
 
-    app.use(express.static('public'));
+    app.use(express.static("public"));
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
 
@@ -39,43 +39,49 @@ mongodb.MongoClient.connect(connectionString, { useUnifiedTopology: true })
       }
     });
 
-    app.get("/", (req, res) => {
-      
-    });
+    app.get("/", (req, res) => {});
 
     app.get(URL.NOTES, (req, res) => {
       quotesCollection
-      .find()
-      .toArray()
-      .then(results => {
-        res.render('index.ejs', { quotes: results });
-      })
-      .catch(/* ... */);
-
+        .find()
+        .toArray()
+        .then((results) => {
+          res.render("index.ejs", { quotes: results });
+        })
+        .catch(/* ... */);
     });
+
+    // POST COMMAND
 
     app.post(URL.NOTES, (req, res) => {
       quotesCollection
         .insertOne(req.body)
         .then((result) => {
-          res.redirect('/api/notes');
+          res.redirect(URL.NOTES);
           console.log(result);
         })
         .catch((error) => console.error(error));
     });
 
+    // UPDATE COMMAND
     app.put(URL.NOTES, (req, res) => {
-      console.log(res.body);
+      quotesCollection.updateOne(
+        { name: req.body.find_name },
+        { $set: { 
+          name: req.body.replace_name,
+          quote: req.body.replace_quote 
+        }});
     });
 
+    
+    app.listen(PORT);
+
+    console.log(
+      `\n--------------------
+      \nStarteed at port: ${PORT}
+      \nHere is your link: http://localhost:${PORT}/
+      \n--------------------`
+    );
   })
   .catch((error) => console.error(error));
 
-console.log(
-  `\n--------------------
-  \nStarteed at port: ${PORT}
-  \nHere is your link: http://localhost:${PORT}/
-  \n--------------------`
-);
-
-app.listen(PORT);

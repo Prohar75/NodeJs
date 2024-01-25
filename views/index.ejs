@@ -22,6 +22,12 @@
       </li>
       <% } %>
     </ul>
-    <script src="../public/main.js"></script>
+
+    <form action="/api/notes" method="PUT">
+      <input type="text" placeholder="find-by-name" name="find_name" />
+      <input type="text" placeholder="replace-name" name="replace_name" />
+      <input type="text" placeholder="replace-quote" name="replace_quote" />
+      <button type="submit">Submit</button>
+    </form>
   </body>
 </html>
