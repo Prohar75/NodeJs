@@ -36,7 +36,21 @@ const schema = {
 };
 const mongooseModel = mongoose.model("NEWCOL", schema);
 
-//GET
+// TASK1
+app.get(URL.GREETINGS, function (req, res) {
+  try {
+    const name = req.query.name;
+    if (name) {
+      res.send(`hello ${name}`);
+    } else {
+      throw new Error("there is no value");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// GET
 app.get(URL.NOTES, async (req, res) => {
   res.send({});
 });
