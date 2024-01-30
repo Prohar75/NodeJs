@@ -1,9 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
-import mongodb, { ObjectId } from "mongodb";
+import mongoose, { ObjectId } from "mongoose";
 const app = express();
 const PORT = 3001;
-const dirname = "C:/Users/egorp/git-repositories/NodeJs/";
 const connectionString =
   "mongodb+srv://Prohar:PEA16april2005@cluster0.bosgtkc.mongodb.net/?retryWrites=true&w=majority";
 
@@ -12,76 +11,114 @@ const URL = {
   NOTES: "/api/notes",
 };
 
-mongodb.MongoClient.connect(connectionString, { useUnifiedTopology: true })
-  .then((client) => {
-    console.log("Connected to Database");
+app.use(express.json());
 
-    const db = client.db("NodeJs-Task");
-    const quotesCollection = db.collection("quotes");
+// DB CONNECTION
+mongoose
+  .connect(connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error.message);
+  });
 
-    app.set("view engine", "ejs");
+// SCHEMA
+const schema = {
+  id: Number,
+  title: String,
+  content: String,
+  createAt: Date,
+  updateAt: Date,
+};
+const mongooseModel = mongoose.model("NEWCOL", schema);
 
-    app.use(express.static("public"));
-    app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(bodyParser.json());
+//GET
+app.get(URL.NOTES, async (req, res) => {
+  res.send({});
+});
 
-    app.get(URL.GREETINGS, function (req, res) {
-      try {
-        const name = req.query.name;
+// POST
+app.post(URL.NOTES, async (req, res) => {
+  console.log("inside post function");
 
-        if (name) {
-          res.send(`hello ${name}`);
-        } else {
-          throw new Error("there is no value");
-        }
-      } catch (error) {
-        console.log(error);
+  const data = new mongooseModel({
+    id: req.body.id,
+    title: req.body.title,
+    content: req.body.content,
+    createAt: Date.now(),
+    updateAt: "",
+  });
+
+  const val = await data.save();
+  res.send(data);
+});
+
+// PUT
+app.put(URL.NOTES + "/:id", async (req, res) => {
+  let updateId = req.params.id;
+  let updateTitle = req.body.title;
+  let updateContent = req.body.content;
+  let updateDate = Date.now();
+
+  mongooseModel
+    .findOneAndUpdate(
+      { id: updateId },
+      {
+        $set: {
+          title: updateTitle,
+          content: updateContent,
+          updateAt: updateDate,
+        },
+      },
+      { new: true }
+    )
+    .exec()
+    .then((data) => {
+      if (data === null) {
+        res.send("nothing found");
+      } else {
+        res.send(data);
       }
+    })
+    .catch((err) => {
+      console.error("Error updating note:", err.message);
+      // Handle the error
+      res.status(500).send("Internal Server Error");
     });
+});
 
-    app.get("/", (req, res) => {});
+// DELETE
 
-    app.get(URL.NOTES, (req, res) => {
-      quotesCollection
-        .find()
-        .toArray()
-        .then((results) => {
-          res.render("index.ejs", { quotes: results });
-        })
-        .catch(/* ... */);
+app.delete(URL.NOTES + "/:id", async (req, res) => {
+  let deleteId = req.params.id;
+
+  mongooseModel.findOneAndDelete({ id: deleteId })
+    .exec()
+    .then(docs => {
+      if (docs === null) {
+        res.send({ success: false, message: "note not found" });
+      } else {
+        res.send({ success: true, id: docs.id });
+      }
+    })
+    .catch(err => {
+      console.error('Error deleting note:', err.message);
+      // Handle the error
+      res.status(500).send('Internal Server Error');
     });
+});
 
-    // POST COMMAND
 
-    app.post(URL.NOTES, (req, res) => {
-      quotesCollection
-        .insertOne(req.body)
-        .then((result) => {
-          res.redirect(URL.NOTES);
-          console.log(result);
-        })
-        .catch((error) => console.error(error));
-    });
 
-    // UPDATE COMMAND
-    app.put(URL.NOTES, (req, res) => {
-      quotesCollection.updateOne(
-        { name: req.body.find_name },
-        { $set: { 
-          name: req.body.replace_name,
-          quote: req.body.replace_quote 
-        }});
-    });
+app.listen(PORT);
 
-    
-    app.listen(PORT);
-
-    console.log(
-      `\n--------------------
+console.log(
+  `\n--------------------
       \nStarteed at port: ${PORT}
       \nHere is your link: http://localhost:${PORT}/
       \n--------------------`
-    );
-  })
-  .catch((error) => console.error(error));
-
+);
