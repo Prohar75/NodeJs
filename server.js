@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./src/db/connectDbMiddleware.js";
-import router from "./src/db/routes/userRoutes.js"
+import userRouter from "./src/routes/userRoutes.js"
+import notesRouter from "./src/routes/notesRoutes.js";
 const app = express();
 const PORT = 3001;
 
@@ -12,7 +13,8 @@ const conf = dotenv.config();
 const connectionString = process.env.MONGO_TOKEN;
 connectDB(connectionString);
 
-app.use(router);
+app.use(userRouter);
+app.use(notesRouter);
 
 app.listen(PORT);
 

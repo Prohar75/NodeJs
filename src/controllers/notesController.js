@@ -1,19 +1,6 @@
-import mongooseModel from "../schemas/notesSchema.js";
+import mongooseModel from "../db/schemas/notesSchema.js";
 
-const userController = {
-  get_name: async (req, res) => {
-    try {
-      const name = req.query.name;
-      if (name) {
-        res.send(`hello ${name}`);
-      } else {
-        throw new Error("there is no value");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  },
-
+const notesController = {
   get_all: async (req, res) => {
     await mongooseModel
       .find({})
@@ -27,9 +14,9 @@ const userController = {
   },
 
   post: async (req, res) => {
-    let createTitle = req.body.title;
-    let createContent = req.body.content;
-    let createDate = Date.now();
+    const createTitle = req.body.title;
+    const createContent = req.body.content;
+    const createDate = Date.now();
 
     await mongooseModel
       .create({
@@ -49,22 +36,14 @@ const userController = {
 
   put: async (req, res) => {
     const updateId = req.params.id;
-    const updateTitle = req.body.title;
-    const updateContent = req.body.content;
-    const updateDate = Date.now();
+    const updateNote = {
+      title: req.body.title,
+      content: req.body.content,
+      date: Date.now(),
+    };
 
     await mongooseModel
-      .findOneAndUpdate(
-        { _id: updateId },
-        {
-          $set: {
-            title: updateTitle,
-            content: updateContent,
-            updateAt: updateDate,
-          },
-        },
-        { new: true }
-      )
+      .findOneAndUpdate({ _id: updateId }, { $set: updateNote }, { new: true })
       .exec()
       .then((data) => {
         if (data === null) {
@@ -99,4 +78,4 @@ const userController = {
   },
 };
 
-export default userController;
+export default notesController;
