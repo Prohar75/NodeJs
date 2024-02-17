@@ -8,7 +8,7 @@ const userController = {
         throw new Error("there is no value");
       }
     } catch (err) {
-      console.log(err);
+      console.log("Error: Something went wrong.");
     }
   },
 };

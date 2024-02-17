@@ -8,8 +8,13 @@ const notesController = {
         res.json(result);
       })
       .catch((err) => {
-        console.error("Error updating note:", err.message);
-        res.send("Internal Server Error");
+        if (err instanceof SyntaxError) {
+          console.error("Error:", err.message);
+          res.send("Error: Wrong type of data, cannot get.");
+        } else {
+          console.error("Error updating note:", err.message);
+          res.send("Error: Something went wrong with getting all the data.");
+        }
       });
   },
 
@@ -29,8 +34,13 @@ const notesController = {
         res.send(createdData);
       })
       .catch((err) => {
-        console.error("Error:", err.message);
-        res.send("Internal Server Error");
+        if (err instanceof SyntaxError) {
+          console.error("Error:", err.message);
+          res.send("Error: Wrong type of data, cannot post.");
+        } else {
+          console.error("Error:", err.message);
+          res.send("Error: Something went wrong, couldn't post the data.");
+        }
       });
   },
 
@@ -53,8 +63,15 @@ const notesController = {
         }
       })
       .catch((err) => {
-        console.error("Error updating note:", err.message);
-        res.send("Internal Server Error");
+        if (err instanceof SyntaxError) {
+          console.error("Error:", err.message);
+          res.send("Error: Wrong type of data, cannot put.");
+        } else {
+          console.error("Error updating note:", err.message);
+          res.send(
+            "Error: Something went wrong, couldn't putting up a new data."
+          );
+        }
       });
   },
 
@@ -72,8 +89,13 @@ const notesController = {
         }
       })
       .catch((err) => {
-        console.error("Error deleting note:", err.message);
-        res.send("Internal Server Error");
+        if (err instanceof SyntaxError) {
+          console.error("Error:", err.message);
+          res.send("Error: Wrong type of data, cannot delete.");
+        } else {
+          console.error("Error updating note:", err.message);
+          res.send("Error: Something went wrong, couldn't delete the data.");
+        }
       });
   },
 };
