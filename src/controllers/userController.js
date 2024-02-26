@@ -1,5 +1,5 @@
 const userController = {
-  get_name: async (req, res) => {
+  getName: async (req, res) => {
     try {
       const name = req.query.name;
       if (name) {

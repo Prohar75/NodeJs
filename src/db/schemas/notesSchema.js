@@ -5,6 +5,7 @@ const schema = {
   content: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: null },
+  isDeleted: {type: Boolean, default: false}
 };
 
 const mongooseModel = new mongoose.model("Notes", schema);

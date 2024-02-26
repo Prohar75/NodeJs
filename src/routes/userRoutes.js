@@ -4,6 +4,6 @@ import URL from "../navigation/pathes.js";
 const userRouter = Router();
 
 // TASK1
-userRouter.get(URL.GREETINGS, userController.get_name);
+userRouter.get(URL.GREETINGS, userController.getName);
 
 export default userRouter;
