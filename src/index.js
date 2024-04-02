@@ -1,8 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB from "./src/db/connectDbMiddleware.js";
-import userRouter from "./src/routes/userRoutes.js"
-import notesRouter from "./src/routes/notesRoutes.js";
+
+import connectDB from "db/connectDbMiddleware.js";
+import userRouter from "routes/userRoutes.js";
+import notesRouter from "routes/notesRoutes.js";
+
 const app = express();
 const PORT = 3001;
 
