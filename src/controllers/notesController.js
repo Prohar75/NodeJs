@@ -1,8 +1,8 @@
-import mongooseModel from "../db/schemas/notesSchema.js";
+import mongooseModel from "db/schemas/notesSchema";
 
 export async function getAllNotes(req, res) {
   await mongooseModel
-    .find({isDeleted: false})
+    .find({ isDeleted: false })
     .then((result) => {
       res.json(result);
     })
@@ -77,7 +77,11 @@ export async function deleteNote(req, res) {
   const deleted = true;
 
   await mongooseModel
-    .findOneAndUpdate({ _id: deleteId }, { $set: {isDeleted: deleted} }, { new: true })
+    .findOneAndUpdate(
+      { _id: deleteId },
+      { $set: { isDeleted: deleted } },
+      { new: true }
+    )
     .exec()
     .then((data) => {
       if (data === null) {

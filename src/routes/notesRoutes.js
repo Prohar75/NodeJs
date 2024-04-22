@@ -1,6 +1,7 @@
 import { Router } from "express";
-import * as notesController from "../controllers/notesController.js";
-import URL from "../navigation/pathes.js";
+
+import * as notesController from "controllers/notesController";
+import URL from "navigation/pathes";
 const notesRouter = Router();
 
 // GET
